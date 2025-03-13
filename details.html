@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; cursor: pointer; background: blue; color: white; border: none; border-radius: 5px; }
+        button:disabled { background: gray; cursor: not-allowed; }
+        .error { color: red; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+    <h2>Personal Details</h2>
+    <div class="container">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="number" id="height" placeholder="Height (cm)" required>
+        <input type="number" id="weight" placeholder="Weight (kg)" required>
+        <input type="text" id="address" placeholder="Address" required>
+        <input type="text" id="doctor" placeholder="Doctor in Charge" required>
+        <input type="text" id="hospital" placeholder="Hospital" required>
+        <input type="tel" id="emergency" placeholder="Emergency Contact (Numbers Only)" required pattern="[0-9]{10}">
+        <input type="email" id="email" placeholder="Email" required>
+        
+        <input type="password" id="password" placeholder="Enter Password" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        
+        <p class="error" id="errorMessage"></p>
+        <button id="saveBtn" onclick="saveDetails()" disabled>Save & Proceed</button>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll("input");
+        const saveBtn = document.getElementById("saveBtn");
+        const errorMessage = document.getElementById("errorMessage");
+
+        // Enable the button only if all fields are filled
+        inputs.forEach(input => {
+            input.addEventListener("input", () => {
+                saveBtn.disabled = !Array.from(inputs).every(input => input.value.trim() !== "");
+            });
+        });
+
+        function saveDetails() {
+            const details = {
+                name: document.getElementById("name").value.trim(),
+                height: document.getElementById("height").value.trim(),
+                weight: document.getElementById("weight").value.trim(),
+                address: document.getElementById("address").value.trim(),
+                doctor: document.getElementById("doctor").value.trim(),
+                hospital: document.getElementById("hospital").value.trim(),
+                emergency: document.getElementById("emergency").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("password").value.trim()
+            };
+
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+            if (details.password.length < 6) {
+                errorMessage.textContent = "Password must be at least 6 characters long!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            if (details.password !== confirmPassword) {
+                errorMessage.textContent = "Passwords do not match!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            localStorage.setItem("patientDetails", JSON.stringify(details)); // Save user details
+            localStorage.setItem("loggedInPatient", JSON.stringify(details)); // Mark as logged in
+
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+</html>

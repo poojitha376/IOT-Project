@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Monitoring Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 50%; margin: auto; padding: 20px; }
+        .buttons { margin-bottom: 20px; }
+        button { margin: 5px; padding: 10px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; display: none; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        .highlight { background-color: lightyellow; }
+    </style>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Patient Monitoring Dashboard</h1>
+
+    <h3>Doctor in Charge: <span id="doctorName">Loading...</span></h3>
+
+    <div class="container">
+        <div class="buttons">
+            <button onclick="showSensor('temp')">Temperature</button>
+            <button onclick="showSensor('heart')">Heart Rate</button>
+            <button onclick="showSensor('spo2')">SpO2</button>
+            <button onclick="showSensor('pulse')">Pulse</button>
+            <button onclick="showSensor('stress')">Stress</button>
+            <button onclick="showSensor('breath')">Breathing Status</button>
+            <button onclick="showSensor('fall')">Fall Status</button>
+        </div>
+
+        <table id="sensorTable">
+            <tr>
+                <th>Sensor</th>
+                <th>Value</th>
+            </tr>
+            <tr id="temp"><td>Temperature</td><td id="tempValue">Loading...</td></tr>
+            <tr id="heart"><td>Heart Rate</td><td id="heartValue">Loading...</td></tr>
+            <tr id="spo2"><td>SpO2</td><td id="spo2Value">Loading...</td></tr>
+            <tr id="pulse"><td>Pulse</td><td id="pulseValue">Loading...</td></tr>
+            <tr id="stress"><td>Stress</td><td id="stressValue">Loading...</td></tr>
+            <tr id="breath"><td>Breathing Status</td><td id="breathValue">Loading...</td></tr>
+            <tr id="fall"><td>Fall Status</td><td id="fallValue">Loading...</td></tr>
+        </table>
+    </div>
+
+    <script>
+        // Ensure a patient is logged in; otherwise, redirect to login
+        const loggedInPatient = JSON.parse(localStorage.getItem("loggedInPatient"));
+        //if (!loggedInPatient) {
+            //alert("No patient is logged in! Redirecting to login...");
+            //window.location.href = "login.html";
+        //} else {
+            document.getElementById("doctorName").textContent = loggedInPatient.doctor || "Unknown";
+        //}
+
+        function showSensor(sensorId) {
+            document.getElementById("sensorTable").style.display = "table";
+            
+            // Remove highlighting from all rows
+            document.querySelectorAll("#sensorTable tr").forEach(row => row.classList.remove("highlight"));
+            
+            // Highlight the selected sensor row
+            document.getElementById(sensorId).classList.add("highlight");
+        }
+    </script>
+</body>
+</html>

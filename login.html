@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; cursor: pointer; background: blue; color: white; border: none; border-radius: 5px; }
+        button:disabled { background: gray; cursor: not-allowed; }
+        a { display: block; margin-top: 10px; text-decoration: none; color: blue; }
+        .error { color: red; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+    <h2>Patient Login</h2>
+    <div class="container">
+        <input type="text" id="patientName" placeholder="Enter Patient Name" required>
+        <input type="password" id="password" placeholder="Enter Password" required>
+        <p class="error" id="errorMessage"></p>
+        <button id="loginBtn" onclick="login()" disabled>Login</button>
+        <a href="details.html">Create New Account</a>
+    </div>
+
+    <script>
+        const patientNameInput = document.getElementById("patientName");
+        const passwordInput = document.getElementById("password");
+        const loginBtn = document.getElementById("loginBtn");
+        const errorMessage = document.getElementById("errorMessage");
+
+        // Enable login button only when both fields are filled
+        document.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", () => {
+                loginBtn.disabled = !(patientNameInput.value.trim() && passwordInput.value.trim());
+            });
+        });
+
+        function login() {
+            const patientName = patientNameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!patientName || !password) {
+                errorMessage.textContent = "Both fields are required!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const storedDetails = JSON.parse(localStorage.getItem("patientDetails"));
+
+            if (!storedDetails) {
+                errorMessage.textContent = "No patient details found! Please create a new account.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            // Check credentials (case insensitive)
+            if (storedDetails.name.toLowerCase() === patientName.toLowerCase() && storedDetails.password === password) {
+                localStorage.setItem("loggedInPatient", JSON.stringify(storedDetails)); // Store logged-in user
+                window.location.href = "dashboard.html";
+            } else {
+                errorMessage.textContent = "Invalid credentials. Please try again.";
+                errorMessage.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
