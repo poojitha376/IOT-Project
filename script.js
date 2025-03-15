@@ -7,9 +7,8 @@ const sensorMapping = {
     heart: "field2",
     spo2: "field3",
     pulse: "field4",
-    stress: "field5",
-    breath: "field6",
-    fall: "field7"
+    breath: "field5",
+    fall: "field6"
 };
 
 // Fetch ThingSpeak data once & update all sensors

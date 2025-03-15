@@ -23,12 +23,11 @@
     <div class="container">
         <div class="buttons">
             <button onclick="fetchSensorData('temp')">Temperature</button>
-            <button onclick="fetchSensorData('heart')">Heart Rate</button>
             <button onclick="fetchSensorData('spo2')">SpO2</button>
+            <button onclick="fetchSensorData('heart')">Heart Rate</button>
             <button onclick="fetchSensorData('pulse')">Pulse</button>
-            <button onclick="fetchSensorData('stress')">Stress</button>
-            <button onclick="fetchSensorData('breath')">Breathing Status</button>
             <button onclick="fetchSensorData('fall')">Fall Status</button>
+            <button onclick="fetchSensorData('breath')">Breathing Status</button>
 
         </div>
 
@@ -38,12 +37,11 @@
                 <th>Value</th>
             </tr>
             <tr id="temp"><td>Temperature</td><td id="tempValue">Loading...</td></tr>
-            <tr id="heart"><td>Heart Rate</td><td id="heartValue">Loading...</td></tr>
             <tr id="spo2"><td>SpO2</td><td id="spo2Value">Loading...</td></tr>
+            <tr id="heart"><td>Heart Rate</td><td id="heartValue">Loading...</td></tr>
             <tr id="pulse"><td>Pulse</td><td id="pulseValue">Loading...</td></tr>
-            <tr id="stress"><td>Stress</td><td id="stressValue">Loading...</td></tr>
-            <tr id="breath"><td>Breathing Status</td><td id="breathValue">Loading...</td></tr>
             <tr id="fall"><td>Fall Status</td><td id="fallValue">Loading...</td></tr>
+            <tr id="breath"><td>Breathing Status</td><td id="breathValue">Loading...</td></tr>
         </table>
     </div>
 
@@ -56,23 +54,6 @@
         //} else {
             //document.getElementById("doctorName").textContent = loggedInPatient.doctor || "Unknown";
         //}
-
-        function showSensor(sensorId) {
-            // Make sure the table is visible
-            document.getElementById("sensorTable").style.display = "table";
-
-            // Remove highlighting from all rows
-            document.querySelectorAll("#sensorTable tr").forEach(row => row.classList.remove("highlight"));
-
-            // Highlight the selected sensor row
-            const selectedRow = document.getElementById(sensorId);
-            if (selectedRow) {
-                selectedRow.classList.add("highlight");
-            } else {
-                console.error("Invalid sensor ID:", sensorId);
-            }
-        }
-
     </script>
 </body>
 </html>
