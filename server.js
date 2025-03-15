@@ -1,70 +1,75 @@
+require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
+// Initialize Express
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Store patient details & sensor data
-let patients = {};
-let sensorData = {};
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-// ✅ API to register a new patient
-app.post("/register", (req, res) => {
-    const { name, email, password, height, weight, address, doctor, hospital, emergency } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required!" });
-    }
-
-    if (patients[email]) {
-        return res.status(400).json({ error: "Patient already registered!" });
-    }
-
-    patients[email] = { name, email, password, height, weight, address, doctor, hospital, emergency };
-    sensorData[email] = { temperature: 36.5, heartRate: 72, alert: "", medication: "" };
-
-    res.status(201).json({ message: "Patient registered successfully!", patient: patients[email] });
+// Define Patient Schema
+const patientSchema = new mongoose.Schema({
+    name: String,
+    height: Number,
+    weight: Number,
+    address: String,
+    doctor: String,
+    hospital: String,
+    emergency: String,
+    email: String,
+    password: String
 });
 
-// ✅ API to login a patient
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
+const Patient = mongoose.model("Patient", patientSchema);
 
-    if (!patients[email] || patients[email].password !== password) {
-        return res.status(401).json({ error: "Invalid email or password!" });
+// API Routes
+
+// Add a new patient
+app.post("/patients", async (req, res) => {
+    try {
+        const newPatient = new Patient(req.body);
+        await newPatient.save();
+        res.status(201).json(newPatient);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-
-    res.json({ message: "Login successful!", patient: patients[email] });
 });
 
-// ✅ API to fetch sensor data for a specific patient
-app.get("/data/:email", (req, res) => {
-    const email = req.params.email;
-    
-    if (!sensorData[email]) {
-        return res.status(404).json({ error: "Patient not found!" });
+// Get all patients
+app.get("/patients", async (req, res) => {
+    try {
+        const patients = await Patient.find();
+        res.json(patients);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    res.json(sensorData[email]);
 });
 
-// ✅ API to update sensor data (from ESP32)
-app.post("/update/:email", (req, res) => {
-    const email = req.params.email;
-    const { temperature, heartRate, alert, medication } = req.body;
+//Handle logins
+app.post("/login", async (req, res) => {
+    const { name, password } = req.body;
 
-    if (!sensorData[email]) {
-        return res.status(404).json({ error: "Patient not found!" });
+    try {
+        const patient = await Patient.findOne({ name });
+
+        if (!patient || patient.password !== password) {
+            return res.status(401).json({ error: "Invalid name or password" });
+        }
+
+        res.json(patient); // Send patient data on successful login
+    } catch (err) {
+        res.status(500).json({ error: "Server error" });
     }
-
-    sensorData[email] = { temperature, heartRate, alert, medication };
-    res.send("Data updated successfully");
 });
 
-// ✅ Debugging: Get all patients
-app.get("/patients", (req, res) => {
-    res.json(patients);
-});
-
-app.listen(3000, () => console.log("✅ Server running on port 3000"));
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

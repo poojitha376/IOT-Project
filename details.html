@@ -24,10 +24,8 @@
         <input type="text" id="hospital" placeholder="Hospital" required>
         <input type="tel" id="emergency" placeholder="Emergency Contact (Numbers Only)" required pattern="[0-9]{10}">
         <input type="email" id="email" placeholder="Email" required>
-        
         <input type="password" id="password" placeholder="Enter Password" required>
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-        
         <p class="error" id="errorMessage"></p>
         <button id="saveBtn" onclick="saveDetails()" disabled>Save & Proceed</button>
     </div>
@@ -37,18 +35,17 @@
         const saveBtn = document.getElementById("saveBtn");
         const errorMessage = document.getElementById("errorMessage");
 
-        // Enable the button only if all fields are filled
         inputs.forEach(input => {
             input.addEventListener("input", () => {
                 saveBtn.disabled = !Array.from(inputs).every(input => input.value.trim() !== "");
             });
         });
 
-        function saveDetails() {
+        async function saveDetails() {
             const details = {
                 name: document.getElementById("name").value.trim(),
-                height: document.getElementById("height").value.trim(),
-                weight: document.getElementById("weight").value.trim(),
+                height: parseInt(document.getElementById("height").value.trim(), 10),
+                weight: parseInt(document.getElementById("weight").value.trim(), 10),
                 address: document.getElementById("address").value.trim(),
                 doctor: document.getElementById("doctor").value.trim(),
                 hospital: document.getElementById("hospital").value.trim(),
@@ -71,11 +68,22 @@
                 return;
             }
 
-            localStorage.setItem("patientDetails", JSON.stringify(details)); // Save user details
-            localStorage.setItem("loggedInPatient", JSON.stringify(details)); // Mark as logged in
-
+            // Send data to MongoDB via API
+            fetch("http://localhost:5000/patients", {
+                method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(details)
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log("Patient saved:", data);
             window.location.href = "dashboard.html";
-        }
+        })
+    .catch(error => console.error("Error saving patient:", error));
+}
+
     </script>
 </body>
 </html>

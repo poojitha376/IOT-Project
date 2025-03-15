@@ -37,7 +37,7 @@
             });
         });
 
-        function login() {
+        async function login() {
             const patientName = patientNameInput.value.trim();
             const password = passwordInput.value.trim();
 
@@ -47,20 +47,24 @@
                 return;
             }
 
-            const storedDetails = JSON.parse(localStorage.getItem("patientDetails"));
+            try {
+                const response = await fetch("http://localhost:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: patientName, password: password })
+                });
 
-            if (!storedDetails) {
-                errorMessage.textContent = "No patient details found! Please create a new account.";
-                errorMessage.style.display = "block";
-                return;
-            }
+                const data = await response.json();
 
-            // Check credentials (case insensitive)
-            if (storedDetails.name.toLowerCase() === patientName.toLowerCase() && storedDetails.password === password) {
-                localStorage.setItem("loggedInPatient", JSON.stringify(storedDetails)); // Store logged-in user
-                window.location.href = "dashboard.html";
-            } else {
-                errorMessage.textContent = "Invalid credentials. Please try again.";
+                if (response.ok) {
+                    localStorage.setItem("loggedInPatient", JSON.stringify(data)); // Store logged-in user
+                    window.location.href = "dashboard.html";
+                } else {
+                    errorMessage.textContent = data.error || "Invalid credentials. Please try again.";
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                errorMessage.textContent = "Server error. Please try again later.";
                 errorMessage.style.display = "block";
             }
         }
