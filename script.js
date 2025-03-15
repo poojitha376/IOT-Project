@@ -4,11 +4,11 @@ const THINGSPEAK_URL = `https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL
 
 const sensorMapping = {
     temp: "field1",
-    heart: "field2",
-    spo2: "field3",
+    spo2: "field2",
+    heart: "field3",
     pulse: "field4",
-    breath: "field5",
-    fall: "field6"
+    fall: "field5",
+    breath: "field6",
 };
 
 // Fetch ThingSpeak data once & update all sensors
