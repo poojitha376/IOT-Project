@@ -22,13 +22,14 @@
 
     <div class="container">
         <div class="buttons">
-            <button onclick="showSensor('temp')">Temperature</button>
-            <button onclick="showSensor('heart')">Heart Rate</button>
-            <button onclick="showSensor('spo2')">SpO2</button>
-            <button onclick="showSensor('pulse')">Pulse</button>
-            <button onclick="showSensor('stress')">Stress</button>
-            <button onclick="showSensor('breath')">Breathing Status</button>
-            <button onclick="showSensor('fall')">Fall Status</button>
+            <button onclick="fetchSensorData('temp')">Temperature</button>
+            <button onclick="fetchSensorData('heart')">Heart Rate</button>
+            <button onclick="fetchSensorData('spo2')">SpO2</button>
+            <button onclick="fetchSensorData('pulse')">Pulse</button>
+            <button onclick="fetchSensorData('stress')">Stress</button>
+            <button onclick="fetchSensorData('breath')">Breathing Status</button>
+            <button onclick="fetchSensorData('fall')">Fall Status</button>
+
         </div>
 
         <table id="sensorTable">
@@ -48,23 +49,30 @@
 
     <script>
         // Ensure a patient is logged in; otherwise, redirect to login
-        const loggedInPatient = JSON.parse(localStorage.getItem("loggedInPatient"));
+        //const loggedInPatient = JSON.parse(localStorage.getItem("loggedInPatient"));
         //if (!loggedInPatient) {
             //alert("No patient is logged in! Redirecting to login...");
             //window.location.href = "login.html";
         //} else {
-            document.getElementById("doctorName").textContent = loggedInPatient.doctor || "Unknown";
+            //document.getElementById("doctorName").textContent = loggedInPatient.doctor || "Unknown";
         //}
 
         function showSensor(sensorId) {
+            // Make sure the table is visible
             document.getElementById("sensorTable").style.display = "table";
-            
+
             // Remove highlighting from all rows
             document.querySelectorAll("#sensorTable tr").forEach(row => row.classList.remove("highlight"));
-            
+
             // Highlight the selected sensor row
-            document.getElementById(sensorId).classList.add("highlight");
+            const selectedRow = document.getElementById(sensorId);
+            if (selectedRow) {
+                selectedRow.classList.add("highlight");
+            } else {
+                console.error("Invalid sensor ID:", sensorId);
+            }
         }
+
     </script>
 </body>
 </html>
