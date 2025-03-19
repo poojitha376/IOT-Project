@@ -159,6 +159,7 @@ function analyzeHealthStatus() {
     }
 
     // 🟢 NORMAL CONDITION (GREEN)
+
     if (issues.length === 0) {
         issues.push("🟢 Patient is stable. No medical concern.");
     }
@@ -171,6 +172,62 @@ function analyzeHealthStatus() {
     statusBox.textContent = statusClass.toUpperCase();
     statusBox.className = `status-box ${statusClass}`;
 }
+
+async function addMedication() {
+    const name = document.getElementById("medName").value.trim();
+    const dosage = parseInt(document.getElementById("dosage").value.trim());
+
+    if (!name || dosage < 1) {
+        alert("Enter valid medication details!");
+        return;
+    }
+
+    let times = [];
+    for (let i = 0; i < dosage; i++) {
+        const time = prompt(`Enter time ${i + 1} (HH:MM 24-hour format)`);
+        if (time) times.push(time);
+    }
+
+    const medication = { name, dosage, times };
+
+    // Store in MongoDB
+    await fetch("http://localhost:5001/medications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(medication)
+    });
+
+    alert("Medication Added!");
+    loadMedications();
+}
+
+async function loadMedications() {
+    const res = await fetch("http://localhost:5001/medications");
+    const meds = await res.json();
+    document.getElementById("medList").innerHTML = meds.map(med =>
+        `<li>${med.name}`).join("");
+}
+
+function checkReminders() {
+    const now = new Date();
+    const currentTime = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
+
+    fetch("http://localhost:5001/medications")
+        .then(res => res.json())
+        .then(meds => {
+            meds.forEach(med => {
+                if (med.times.includes(currentTime)) {
+                    new Notification("Medication Reminder", { body: `Time to take ${med.name}` });
+                }
+            });
+        });
+}
+
+if (Notification.permission !== "granted") Notification.requestPermission();
+
+setInterval(checkReminders, 60000); // Check every minute
+document.addEventListener("DOMContentLoaded", loadMedications);
+
 
 // Fetch data when dashboard loads
 document.addEventListener("DOMContentLoaded", () => {

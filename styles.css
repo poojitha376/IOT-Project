@@ -82,3 +82,62 @@ th, td {
     from { box-shadow: 0px 0px 10px red; }
     to { box-shadow: 0px 0px 20px darkred; }
 }
+/* Medication Reminder Section Enhancements */
+/* Medication Reminder Section Enhancements */
+.container h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #333;
+}
+
+#medName, #dosage {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#medList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#medList li {
+    background: #f8f9fa;
+    margin: 5px 0;
+    padding: 10px;
+    border-left: 5px solid #007bff;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+#medList li input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.completed {
+    text-decoration: line-through;
+    color: gray;
+}
+

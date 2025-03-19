@@ -1,21 +1,21 @@
-require("dotenv").config();
+require("dotenv").config(); // Load environment variables from .env
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-// Initialize Express
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// Connect to MongoDB
+// Connect to MongoDB using .env variable
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+    useUnifiedTopology: true,
+}).then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB Connection Error:", err));
 
-// Define Patient Schema
+
 const patientSchema = new mongoose.Schema({
     name: String,
     height: Number,
@@ -30,48 +30,83 @@ const patientSchema = new mongoose.Schema({
 
 const Patient = mongoose.model("Patient", patientSchema);
 
-// API Routes
-
-// Add a new patient
+// Route to register a patient
 app.post("/patients", async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const newPatient = new Patient({ ...req.body, password: hashedPassword });
-        await newPatient.save();
-        res.status(201).json(newPatient);
-    } catch (err) {
-        console.error("Error saving patient:", err);
-        res.status(400).json({ error: err.message });
+        const patient = new Patient(req.body);
+        await patient.save();
+        res.json({ message: "Patient Registered!" });
+    } catch (error) {
+        res.status(500).json({ error: "Error saving patient" });
     }
 });
 
-// Get all patients
-app.get("/patients", async (req, res) => {
-    try {
-        const patients = await Patient.find();
-        res.json(patients);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-//Handle logins
+// Route to login a patient
 app.post("/login", async (req, res) => {
-    const { name, password } = req.body;
-
     try {
-        const patient = await Patient.findOne({ name });
+        const { name, password } = req.body;
+        const patient = await Patient.findOne({ name, password });
 
-        if (!patient || patient.password !== password) {
-            return res.status(401).json({ error: "Invalid name or password" });
+        if (!patient) {
+            return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        res.json(patient); // Send patient data on successful login
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
+        res.json(patient);
+    } catch (error) {
+        res.status(500).json({ error: "Login failed" });
     }
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
+// ==========================
+// Medication Reminder Schema
+// ==========================
+const medicationSchema = new mongoose.Schema({
+    name: String,
+    dosage: Number,
+    times: [String]
+});
+
+const Medication = mongoose.model("Medication", medicationSchema);
+
+// Route to add medication
+app.post("/medications", async (req, res) => {
+    try {
+        const med = new Medication(req.body);
+        await med.save();
+        res.json({ message: "Medication Added!" });
+    } catch (error) {
+        res.status(500).json({ error: "Error saving medication" });
+    }
+});
+
+// Route to fetch medications
+app.get("/medications", async (req, res) => {
+    try {
+        const meds = await Medication.find();
+        res.json(meds);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching medications" });
+    }
+});
+
+
+app.delete("/medications/:name", async (req, res) => {
+    try {
+        const result = await Medication.findOneAndDelete({ name: req.params.name });
+
+        if (!result) {
+            return res.status(404).json({ error: "Medication not found" });
+        }
+
+        res.json({ message: `Medication '${req.params.name}' deleted successfully!` });
+    } catch (error) {
+        res.status(500).json({ error: "Error deleting medication" });
+    }
+});
+
+// ==========================
+// Start Server
+// ==========================
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
