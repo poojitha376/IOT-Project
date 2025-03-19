@@ -5,7 +5,8 @@ https://chatgpt.com/c/67d2b086-2bd8-800b-a2b8-48a4847ad5b4
 
 MongoDB database:
 (details in connection string of the .env file in this directory)
-https://cloud.mongodb.com/v2/67ab3d5263c48c263cd4effb#/metrics/replicaSet/67d5d995f5252b34b1c02f60/explorer/patientDB/patients/find
+Connection URI:
+mongodb+srv://goyalamish2186:xCM5cMafR8dRYoHE@iot-project.w8euq.mongodb.net/?retryWrites=true&w=majority&appName=IoT-project
 
-username: nehaprabhup17
-password: Welcome12
+username: goyalamish2186
+password: xCM5cMafR8dRYoHE
