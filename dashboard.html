@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Monitoring Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .container { width: 50%; margin: auto; padding: 20px; }
-        .buttons { margin-bottom: 20px; }
-        button { margin: 5px; padding: 10px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; display: none; }
-        th, td { border: 1px solid black; padding: 10px; text-align: center; }
-        .highlight { background-color: lightyellow; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -43,6 +35,13 @@
             <tr id="fall"><td>Fall Status</td><td id="fallValue">Loading...</td></tr>
             <tr id="breath"><td>Breathing Status</td><td id="breathValue">Loading...</td></tr>
         </table>
+
+        <div class="report-section" id="reportSection">
+            <h2>Report</h2>
+            <p id="reportText">Analyzing data...</p>
+            <div id="statusBox" class="status-box">Checking...</div>
+        </div>
+
     </div>
 </body>
 </html>

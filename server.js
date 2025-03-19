@@ -35,10 +35,12 @@ const Patient = mongoose.model("Patient", patientSchema);
 // Add a new patient
 app.post("/patients", async (req, res) => {
     try {
-        const newPatient = new Patient(req.body);
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const newPatient = new Patient({ ...req.body, password: hashedPassword });
         await newPatient.save();
         res.status(201).json(newPatient);
     } catch (err) {
+        console.error("Error saving patient:", err);
         res.status(400).json({ error: err.message });
     }
 });
