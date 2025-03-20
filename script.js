@@ -77,100 +77,113 @@ function analyzeHealthStatus() {
     let spo2 = parseFloat(document.getElementById("spo2Value").textContent) || 0;
     let heart = parseFloat(document.getElementById("heartValue").textContent) || 0;
     let fall = parseFloat(document.getElementById("fallValue").textContent) || 0;
-    let breath = parseFloat(document.getElementById("breathValue").textContent) || 0;
+    let breath = parseFloat(document.getElementById("breathValue").textContent) || 0; 
 
+    let statusClass = "normal"; // Default status
+    let count = { mild: 0, moderate: 0, severe: 0, critical: 0 };
     let issues = []; // Collect all out-of-range conditions
-    let statusClass = "normal"; // Default to normal (green)
+
+    function addIssue(icon, level, message, category) {
+        issues.push({ icon, level, message });
+        count[category]++;
+        if (["critical", "severe", "moderate", "mild"].includes(level.toLowerCase())) {
+            statusClass = level.toLowerCase();
+        }
+    }
 
     // ⚫ CRITICAL CONDITIONS (BLACK)
-    if (temp > 40) {
-        issues.push(`⚠️ CRITICAL: Temperature (${temp}°F) extreme!`);
-        statusClass = "critical";
-    }
-    if (spo2 < 85) {
-        issues.push(`⚠️ CRITICAL: Oxygen dangerously low (${spo2}%)!`);
-        statusClass = "critical";
-    }
-    if (heart > 150 || heart < 40) {
-        issues.push(`⚠️ CRITICAL: Abnormal heart rate (${heart} BPM)!`);
-        statusClass = "critical";
-    }
-    if (breath < 8 || breath > 40) {
-        issues.push(`⚠️ CRITICAL: Irregular breathing (${breath} BPM)!`);
-        statusClass = "critical";
-    }
-    if (fall >= 8) {
-        issues.push("🚨 CRITICAL: Fall detected! Immediate medical attention required.");
-        statusClass = "critical";
-    }
+    if (temp > 40) addIssue("⚠️", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
+    if (spo2 < 85) addIssue("⚠️", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
+    if (heart > 150 || heart < 40) addIssue("⚠️", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
+    if (breath < 8 || breath > 40) addIssue("⚠️", "CRITICAL", `Irregular breathing (${breath} BPM)!`, "critical");
+    if (fall >= 8) addIssue("🚨", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
 
     // 🔴 SEVERE CONDITIONS (RED)
-    if (temp >= 39 && temp <= 40) {
-        issues.push(`🔴 SEVERE: High fever detected (${temp}°C).`);
-        if (statusClass !== "critical") statusClass = "severe";
-    }
-    if (spo2 >= 85 && spo2 < 88) {
-        issues.push(`🔴 SEVERE: Very low oxygen level (${spo2}%).`);
-        if (statusClass !== "critical") statusClass = "severe";
-    }
-    if (heart >= 130 && heart < 150) {
-        issues.push(`🔴 SEVERE: Rapid heart rate (${heart} BPM).`);
-        if (statusClass !== "critical") statusClass = "severe";
-    }
-    if (breath >= 30 && breath < 40) {
-        issues.push(`🔴 SEVERE: Fast breathing (${breath} BPM).`);
-        if (statusClass !== "critical") statusClass = "severe";
-    }
+    if (temp >= 39 && temp <= 40) addIssue("🔴", "SEVERE", `High fever detected (${temp.toFixed(1)}°C).`, "severe");
+    if (spo2 >= 85 && spo2 < 88) addIssue("🔴", "SEVERE", `Very low oxygen level (${spo2}%).`, "severe");
+    if (heart >= 130 && heart < 150) addIssue("🔴", "SEVERE", `Rapid heart rate (${heart} BPM).`, "severe");
+    if (breath >= 30 && breath < 40) addIssue("🔴", "SEVERE", `Fast breathing (${breath} BPM).`, "severe");
 
     // 🟠 MODERATE CONDITIONS (ORANGE)
-    if (temp >= 38 && temp < 39) {
-        issues.push(`🟠 MODERATE: Fever detected (${temp}°F).`);
-        if (statusClass !== "critical" && statusClass !== "severe") statusClass = "moderate";
-    }
-    if (spo2 >= 88 && spo2 < 91) {
-        issues.push(`🟠 MODERATE: Oxygen level slightly low (${spo2}%).`);
-        if (statusClass !== "critical" && statusClass !== "severe") statusClass = "moderate";
-    }
-    if (heart >= 110 && heart < 130) {
-        issues.push(`🟠 MODERATE: Increased heart rate (${heart} BPM).`);
-        if (statusClass !== "critical" && statusClass !== "severe") statusClass = "moderate";
-    }
-    if (breath >= 24 && breath < 30) {
-        issues.push(`🟠 MODERATE: Breathing rate elevated (${breath} BPM).`);
-        if (statusClass !== "critical" && statusClass !== "severe") statusClass = "moderate";
-    }
+    if (temp >= 38 && temp < 39) addIssue("🟠", "MODERATE", `Fever detected (${temp.toFixed(1)}°C).`, "moderate");
+    if (spo2 >= 88 && spo2 < 91) addIssue("🟠", "MODERATE", `Oxygen level slightly low (${spo2}%).`, "moderate");
+    if (heart >= 110 && heart < 130) addIssue("🟠", "MODERATE", `Increased heart rate (${heart} BPM).`, "moderate");
+    if (breath >= 24 && breath < 30) addIssue("🟠", "MODERATE", `Breathing rate elevated (${breath} BPM).`, "moderate");
 
     // 🟡 MILD CONDITIONS (YELLOW)
-    if (temp >= 37.3 && temp < 38) {
-        issues.push(`🟡 MILD: Slight fever (${temp}°F).`);
-        if (statusClass !== "critical" && statusClass !== "severe" && statusClass !== "moderate") statusClass = "mild";
-    }
-    if (spo2 >= 92 && spo2 < 95) {
-        issues.push(`🟡 MILD: Oxygen level slightly reduced (${spo2}%).`);
-        if (statusClass !== "critical" && statusClass !== "severe" && statusClass !== "moderate") statusClass = "mild";
-    }
-    if (heart >= 100 && heart < 110) {
-        issues.push(`🟡 MILD: Mild tachycardia (${heart} BPM).`);
-        if (statusClass !== "critical" && statusClass !== "severe" && statusClass !== "moderate") statusClass = "mild";
-    }
-    if (breath >= 20 && breath < 24) {
-        issues.push(`🟡 MILD: Slightly high breathing rate (${breath} BPM).`);
-        if (statusClass !== "critical" && statusClass !== "severe" && statusClass !== "moderate") statusClass = "mild";
-    }
+    if (temp >= 37.3 && temp < 38) addIssue("🟡", "MILD", `Slight fever (${temp.toFixed(1)}°C).`, "mild");
+    if (spo2 >= 92 && spo2 < 95) addIssue("🟡", "MILD", `Oxygen level slightly reduced (${spo2}%).`, "mild");
+    if (heart >= 100 && heart < 110) addIssue("🟡", "MILD", `Mild tachycardia (${heart} BPM).`, "mild");
+    if (breath >= 20 && breath < 24) addIssue("🟡", "MILD", `Slightly high breathing rate (${breath} BPM).`, "mild");
 
     // 🟢 NORMAL CONDITION (GREEN)
-
     if (issues.length === 0) {
-        issues.push("🟢 Patient is stable. No medical concern.");
+        issues.push({ icon: "🟢", level: "NORMAL", message: "Patient is stable. No medical concern." });
     }
 
-    // Update Report Text
-    document.getElementById("reportText").innerHTML = issues.join("<br>");
+    // **Update Report Table**
+    let reportTable = document.getElementById("reportTableBody");
+    reportTable.innerHTML = ""; // Clear previous table rows
+
+    issues.forEach(issue => {
+        let row = document.createElement("tr");
+        row.innerHTML = `<td>${issue.icon}</td><td>${issue.level}</td><td>${issue.message}</td>`;
+        reportTable.appendChild(row);
+    });
 
     // Update Status Box
     let statusBox = document.getElementById("statusBox");
     statusBox.textContent = statusClass.toUpperCase();
     statusBox.className = `status-box ${statusClass}`;
+
+    // **Possible Causes Section**
+    let possibleCauses = document.getElementById("possibleCausesSection");
+    let possibleCausesList = document.getElementById("possibleCausesList");
+    possibleCausesList.innerHTML = ""; // Clear previous entries
+
+    let causes = [];
+    if (count.critical > count.severe && count.critical > count.moderate && count.critical > count.mild) {
+        causes = [
+            "🔥 Severe infections (Sepsis, Septic Shock)",
+            "💔 Heart attack, Stroke, Organ failure",
+            "🫁 Severe asthma attack, Respiratory arrest",
+            "🧠 Heat stroke, Brain damage risk"
+        ];
+    } else if (count.severe > count.moderate && count.severe > count.mild) {
+        causes = [
+            "Severe infections (pneumonia, COVID-19, sepsis)",
+            "Heart issues (hypertensive crisis, heart failure)",
+            "Respiratory distress (asthma attack, severe hypoxia)",
+            "Extreme stress response (panic attack, medical emergency)"
+        ];
+    } else if (count.moderate > count.mild) {
+        causes = [
+            "Infection (flu, mild pneumonia, fever)",
+            "Respiratory Issues (asthma, mild COVID-19)",
+            "Hypertension (rising BP can cause long-term damage)",
+            "High stress or anxiety attacks"
+        ];
+    } else if (count.mild > 0) {
+        causes = [
+            "Dehydration",
+            "Anxiety or stress",
+            "Mild fever (common cold, flu)",
+            "Lack of sleep",
+            "High caffeine intake"
+        ];
+    }
+
+    if (causes.length > 0) {
+        possibleCauses.style.display = "block";
+        causes.forEach(cause => {
+            let div = document.createElement("div"); // Create a div instead of <li>
+            div.innerHTML = cause;
+            div.classList.add("cause-item"); // Apply CSS styling
+            possibleCausesList.appendChild(div);
+        });
+    } else {
+        possibleCauses.style.display = "none";
+    }
 }
 
 async function addMedication() {

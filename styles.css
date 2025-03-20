@@ -1,57 +1,95 @@
+/* General Page Styling */
 body { 
     font-family: Arial, sans-serif; 
     text-align: center; 
+    background-color: #f4f4f4; /* Light background */
+    margin: 0;
+    padding: 0;
 }
 
-.container { 
-    width: 50%; 
-    margin: auto; 
+/* Unified Container Styling */
+.container, .report-section { 
+    width: 60%; 
+    margin: 20px auto; 
     padding: 20px; 
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
-        
+
+/* Buttons */
 .buttons { 
     margin-bottom: 20px; 
 }
-        
+
 button { 
     margin: 5px; 
     padding: 10px; 
     cursor: pointer; 
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s;
 }
-        
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styling */
 table { 
     width: 100%; 
     border-collapse: collapse; 
     margin-top: 20px; 
-    display: none; 
-}
-        
-th, td { 
-    border: 1px solid black; 
-    padding: 10px; 
-    text-align: center; 
-}
-        
-.highlight { 
-    background-color: lightyellow; 
+    background: white;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
+th, td { 
+    border: 1px solid #ddd; 
+    padding: 12px; 
+    text-align: center; 
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+/* Alternate row color for better readability */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Health Report Section */
 .report-section {
     margin-top: 20px;
     padding: 15px;
-    border-radius: 5px;
-    display: block; /* Visible on page load */
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Status Box */
 .status-box {
     padding: 10px;
     font-weight: bold;
     border-radius: 5px;
-    margin-top: 10px;
+    margin: 10px auto;
     display: inline-block;
-    transition: all 0.3s ease-in-out; /* Smooth transition */
+    width: 200px;
+    text-align: center;
+    font-size: 18px;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid #ddd;
 }
 
+/* Health Status Colors */
 .normal { 
     background-color: lightgreen; 
     color: black; 
@@ -64,7 +102,7 @@ th, td {
 
 .moderate { 
     background-color: orange; 
-    color: black; 
+    color: white; 
 }
 
 .severe { 
@@ -82,8 +120,33 @@ th, td {
     from { box-shadow: 0px 0px 10px red; }
     to { box-shadow: 0px 0px 20px darkred; }
 }
-/* Medication Reminder Section Enhancements */
-/* Medication Reminder Section Enhancements */
+
+/* Possible Causes Section */
+#possibleCausesSection {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#possibleCausesList {
+    padding: 0;
+    text-align: left;
+}
+
+.cause-item {
+    background: #f8f9fa;
+    margin: 5px 0;
+    padding: 10px;
+    border-left: 5px solid #007bff;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+
+/* Medication Reminder */
 .container h2 {
     margin-bottom: 10px;
     font-size: 24px;
@@ -97,20 +160,6 @@ th, td {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-}
-
-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
 }
 
 #medList {
@@ -140,4 +189,3 @@ button:hover {
     text-decoration: line-through;
     color: gray;
 }
-

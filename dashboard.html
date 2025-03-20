@@ -36,13 +36,37 @@
             <tr id="breath"><td>Breathing Status</td><td id="breathValue">Loading...</td></tr>
         </table>
 
-        <div class="report-section" id="reportSection">
-            <h2>Report</h2>
-            <p id="reportText">Analyzing data...</p>
-            <div id="statusBox" class="status-box">Checking...</div>
         </div>
 
-    </div>
+        <div class="report-section" id="reportSection">
+            <h2>Health Report</h2>
+            
+            <!-- Status Box -->
+            <div id="statusBox" class="status-box">Checking...</div>
+        
+            <!-- Report Table -->
+            <table border="1" id="reportTable">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Condition</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    <!-- Health report rows will be dynamically added here -->
+                </tbody>
+            </table>
+            </div>
+        
+            <!-- Possible Causes Section -->
+            <div class="container">
+                <h2>Possible Causes</h2>
+                <div id="possibleCausesSection" style="display: none;">
+                    <div id="possibleCausesList"></div> <!-- Replaced <ul> with <div> -->
+                </div>
+            </div>
+        </div>
 
     <div class="container">
     <h2>Medication Reminder</h2>
@@ -50,7 +74,7 @@
     <input type="number" id="dosage" placeholder="Dosage Per Day">
     <button onclick="addMedication()">Add Medication</button>
     <ul id="medList"></ul>
-</div>
+    </div>
 
 </body>
 </html>
