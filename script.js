@@ -49,6 +49,7 @@ async function fetchSensorData(sensorType) {
 
         // Re-run analysis after fetching new data
         analyzeHealthStatus();
+        sendDataToServer();
     } catch (error) {
         console.error("Error fetching data:", error);
     }
@@ -92,11 +93,11 @@ function analyzeHealthStatus() {
     }
 
     // ⚫ CRITICAL CONDITIONS (BLACK)
-    if (temp > 40) addIssue("⚠️", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
-    if (spo2 < 85) addIssue("⚠️", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
-    if (heart > 150 || heart < 40) addIssue("⚠️", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
-    if (breath < 8 || breath > 40) addIssue("⚠️", "CRITICAL", `Irregular breathing (${breath} BPM)!`, "critical");
-    if (fall >= 8) addIssue("🚨", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
+    if (temp > 40) addIssue("⚫", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
+    if (spo2 < 85) addIssue("⚫", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
+    if (heart > 150 || heart < 40) addIssue("⚫", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
+    if (breath < 8 || breath > 40) addIssue("⚫", "CRITICAL", `Irregular breathing (${breath} BPM)!`, "critical");
+    if (fall >= 8) addIssue("⚫", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
 
     // 🔴 SEVERE CONDITIONS (RED)
     if (temp >= 39 && temp <= 40) addIssue("🔴", "SEVERE", `High fever detected (${temp.toFixed(1)}°C).`, "severe");
@@ -144,10 +145,10 @@ function analyzeHealthStatus() {
     let causes = [];
     if (count.critical > count.severe && count.critical > count.moderate && count.critical > count.mild) {
         causes = [
-            "🔥 Severe infections (Sepsis, Septic Shock)",
-            "💔 Heart attack, Stroke, Organ failure",
-            "🫁 Severe asthma attack, Respiratory arrest",
-            "🧠 Heat stroke, Brain damage risk"
+            "Severe infections (Sepsis, Septic Shock)",
+            "Heart attack, Stroke, Organ failure",
+            "Severe asthma attack, Respiratory arrest",
+            "Heat stroke, Brain damage risk"
         ];
     } else if (count.severe > count.moderate && count.severe > count.mild) {
         causes = [
@@ -183,6 +184,31 @@ function analyzeHealthStatus() {
         });
     } else {
         possibleCauses.style.display = "none";
+    }
+}
+
+async function sendDataToServer() {
+    let sensorData = {
+        temperature: parseFloat(document.getElementById("tempValue").textContent) || 0,
+        spo2: parseFloat(document.getElementById("spo2Value").textContent) || 0,
+        heartRate: parseFloat(document.getElementById("heartValue").textContent) || 0,
+        pulse: parseFloat(document.getElementById("pulseValue").textContent) || 0,
+        fall: parseFloat(document.getElementById("fallValue").textContent) || 0,
+        breath: parseFloat(document.getElementById("breathValue").textContent) || 0,
+        analysis: document.getElementById("reportText").innerText,
+    };
+
+    try {
+        const response = await fetch("http://localhost:5001/data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(sensorData),
+        });
+
+        const result = await response.json();
+        console.log("Data sent to server:", result);
+    } catch (error) {
+        console.error("Error sending data:", error);
     }
 }
 

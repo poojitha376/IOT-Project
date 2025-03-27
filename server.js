@@ -57,6 +57,41 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// Define Data Schema for sensor readings
+const dataSchema = new mongoose.Schema({
+    timestamp: { type: Date, default: Date.now },
+    temperature: Number,
+    spo2: Number,
+    heartRate: Number,
+    pulse: Number,
+    fall: Number,
+    breath: Number,
+    analysis: String
+});
+
+const Data = mongoose.model("Data", dataSchema);
+
+// Store sensor data
+app.post("/data", async (req, res) => {
+    try {
+        const newData = new Data(req.body);
+        await newData.save();
+        res.status(201).json({ message: "Sensor data stored successfully", data: newData });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get all stored sensor data
+app.get("/data", async (req, res) => {
+    try {
+        const data = await Data.find().sort({ timestamp: -1 });
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ==========================
 // Medication Reminder Schema
 // ==========================
