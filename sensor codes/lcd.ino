@@ -1,6 +1,9 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+// IT must be connected to vin, not 3v3
+
+
 // LCD I²C address (0x27 or 0x3F, depending on your module)
 #define LCD_ADDR 0x27  
 #define SDA_PIN 21
