@@ -1,0 +1,75 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include "MAX30105.h"  // SparkFun MAX3010x library
+
+// LCD settings
+#define LCD_ADDR 0x27
+#define LCD_SDA 21
+#define LCD_SCL 22
+
+// MAX30102 settings
+#define MAX_SDA 19
+#define MAX_SCL 18
+
+// Create TwoWire instance for MAX30102
+TwoWire MAXWire = TwoWire(1);
+
+// LCD object (uses default Wire, which we assign to LCD)
+LiquidCrystal_I2C lcd(LCD_ADDR, 16, 2);
+
+// MAX30102 sensor
+MAX30105 particleSensor;
+
+void setup() {
+  // Initialize serial for debug (optional)
+  Serial.begin(115200);
+
+  // Init LCD I2C
+  Wire.begin(LCD_SDA, LCD_SCL);  // Default Wire for LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Initializing...");
+
+  // Init MAX30102 I2C
+  MAXWire.begin(MAX_SDA, MAX_SCL);
+  if (!particleSensor.begin(MAXWire, I2C_SPEED_FAST)) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Sensor Not Found");
+    while (1);  // halt
+  }
+
+  // Sensor settings
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x1F);
+  particleSensor.setPulseAmplitudeIR(0x1F);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Sensor Ready");
+  delay(1000);
+}
+
+void loop() {
+  long redValue = particleSensor.getRed();
+  long irValue = particleSensor.getIR();
+
+  // Simulated estimates (use proper algorithm in real use)
+  float estimatedHeartRate = (redValue % 100) + 60;
+  float estimatedSpO2 = 95.0 + ((irValue % 5) * 0.2);
+
+  // Display on LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("HR: ");
+  lcd.print((int)estimatedHeartRate);
+  lcd.print(" BPM");
+
+  lcd.setCursor(0, 1);
+  lcd.print("SpO2: ");
+  lcd.print(estimatedSpO2, 1);
+  lcd.print(" %");
+
+  delay(2000);
+}
