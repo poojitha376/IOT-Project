@@ -1,5 +1,7 @@
 const int tempPin = 34; // LM35DZ connected to GPIO34 (ADC1)
 
+/// ONLYYYYYYY 34 WORKS(OTHER IDK)
+
 void setup() {
     Serial.begin(115200);
     analogReadResolution(12); // Set ADC resolution to 12-bit (0-4095)
