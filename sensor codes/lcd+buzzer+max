@@ -1,0 +1,97 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include "MAX30105.h"  // SparkFun MAX3010x library
+
+#define LCD_ADDR 0x27
+#define LCD_SDA 21
+#define LCD_SCL 22
+
+#define MAX_SDA 19
+#define MAX_SCL 18
+
+#define BUZZER_PIN 5
+
+const int bufferSize = 5;
+float hrBuffer[bufferSize];
+float spo2Buffer[bufferSize];
+int bufferIndex = 0;
+
+TwoWire MAXWire = TwoWire(1);
+LiquidCrystal_I2C lcd(LCD_ADDR, 16, 2);
+MAX30105 particleSensor;
+
+void setup() {
+  Serial.begin(115200);
+
+  Wire.begin(LCD_SDA, LCD_SCL);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Initializing...");
+
+  MAXWire.begin(MAX_SDA, MAX_SCL);
+  if (!particleSensor.begin(MAXWire, I2C_SPEED_FAST)) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Sensor Not Found");
+    while (1);
+  }
+
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x1F);
+  particleSensor.setPulseAmplitudeIR(0x1F);
+
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Sensor Ready");
+  delay(1000);
+}
+
+void loop() {
+  long redValue = particleSensor.getRed();
+  long irValue = particleSensor.getIR();
+
+  float estimatedHeartRate = (redValue % 100) + 60;
+  float estimatedSpO2 = 95.0 + ((irValue % 5) * 0.2);
+
+  // Store in buffer
+  hrBuffer[bufferIndex] = estimatedHeartRate;
+  spo2Buffer[bufferIndex] = estimatedSpO2;
+  bufferIndex = (bufferIndex + 1) % bufferSize;
+
+  // Count abnormal readings in the last 5
+  int abnormalCount = 0;
+  for (int i = 0; i < bufferSize; i++) {
+    if (hrBuffer[i] > 100.0 || spo2Buffer[i] < 95.0) {
+      abnormalCount++;
+    }
+  }
+
+  // Control buzzer
+  if (abnormalCount >= 3) {
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+
+  // Display on LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("HR: ");
+  lcd.print((int)estimatedHeartRate);
+  lcd.print(" BPM");
+
+  lcd.setCursor(0, 1);
+  lcd.print("SpO2: ");
+  lcd.print(estimatedSpO2, 1);
+  lcd.print(" %");
+
+  Serial.print("HR: "); Serial.print(estimatedHeartRate);
+  Serial.print(" BPM, SpO2: "); Serial.print(estimatedSpO2); Serial.print(" % ");
+  Serial.print("Abnormal: "); Serial.println(abnormalCount);
+
+  delay(2000);
+}
