@@ -1,6 +1,6 @@
 const int tempPin = 34; // LM35DZ connected to GPIO34 (ADC1)
 
-//// onlyyyy 34 oin works(16 doesn't, others like 35 n all idk)
+//// onlyyyy 34 oin works(16 doesn't, others like 35 n all idk).
 
 void setup() {
     Serial.begin(115200);
