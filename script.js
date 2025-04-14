@@ -96,26 +96,24 @@ function analyzeHealthStatus() {
     if (temp > 40) addIssue("⚫", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
     if (spo2 < 85) addIssue("⚫", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
     if (heart > 150 || heart < 40) addIssue("⚫", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
-    if (touch < 8 || touch > 40) addIssue("⚫", "CRITICAL", `Irregular touching (${touch} BPM)!`, "critical");
     if (fall >= 8) addIssue("⚫", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
+    if (touch == 4) addIssue("⚫", "CRITICAL", `The patient is seeking help!`, "critical");
+
 
     // 🔴 SEVERE CONDITIONS (RED)
     if (temp >= 39 && temp <= 40) addIssue("🔴", "SEVERE", `High fever detected (${temp.toFixed(1)}°C).`, "severe");
     if (spo2 >= 85 && spo2 < 88) addIssue("🔴", "SEVERE", `Very low oxygen level (${spo2}%).`, "severe");
     if (heart >= 130 && heart < 150) addIssue("🔴", "SEVERE", `Rapid heart rate (${heart} BPM).`, "severe");
-    if (touch >= 30 && touch < 40) addIssue("🔴", "SEVERE", `Fast touching (${touch} BPM).`, "severe");
 
     // 🟠 MODERATE CONDITIONS (ORANGE)
     if (temp >= 38 && temp < 39) addIssue("🟠", "MODERATE", `Fever detected (${temp.toFixed(1)}°C).`, "moderate");
     if (spo2 >= 88 && spo2 < 91) addIssue("🟠", "MODERATE", `Oxygen level slightly low (${spo2}%).`, "moderate");
     if (heart >= 110 && heart < 130) addIssue("🟠", "MODERATE", `Increased heart rate (${heart} BPM).`, "moderate");
-    if (touch >= 24 && touch < 30) addIssue("🟠", "MODERATE", `touching rate elevated (${touch} BPM).`, "moderate");
 
     // 🟡 MILD CONDITIONS (YELLOW)
     if (temp >= 37.3 && temp < 38) addIssue("🟡", "MILD", `Slight fever (${temp.toFixed(1)}°C).`, "mild");
     if (spo2 >= 92 && spo2 < 95) addIssue("🟡", "MILD", `Oxygen level slightly reduced (${spo2}%).`, "mild");
     if (heart >= 100 && heart < 110) addIssue("🟡", "MILD", `Mild tachycardia (${heart} BPM).`, "mild");
-    if (touch >= 20 && touch < 24) addIssue("🟡", "MILD", `Slightly high touching rate (${touch} BPM).`, "mild");
 
     // 🟢 NORMAL CONDITION (GREEN)
     if (issues.length === 0) {
