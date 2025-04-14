@@ -8,7 +8,7 @@ const sensorMapping = {
     heart: "field3",
     pulse: "field4",
     fall: "field5",
-    breath: "field6",
+    touch: "field6",
 };
 
 // Fetch ThingSpeak data & update sensors
@@ -78,7 +78,7 @@ function analyzeHealthStatus() {
     let spo2 = parseFloat(document.getElementById("spo2Value").textContent) || 0;
     let heart = parseFloat(document.getElementById("heartValue").textContent) || 0;
     let fall = parseFloat(document.getElementById("fallValue").textContent) || 0;
-    let breath = parseFloat(document.getElementById("breathValue").textContent) || 0; 
+    let touch = parseFloat(document.getElementById("touchValue").textContent) || 0; 
 
     let statusClass = "normal"; // Default status
     let count = { mild: 0, moderate: 0, severe: 0, critical: 0 };
@@ -96,26 +96,26 @@ function analyzeHealthStatus() {
     if (temp > 40) addIssue("⚫", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
     if (spo2 < 85) addIssue("⚫", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
     if (heart > 150 || heart < 40) addIssue("⚫", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
-    if (breath < 8 || breath > 40) addIssue("⚫", "CRITICAL", `Irregular breathing (${breath} BPM)!`, "critical");
+    if (touch < 8 || touch > 40) addIssue("⚫", "CRITICAL", `Irregular touching (${touch} BPM)!`, "critical");
     if (fall >= 8) addIssue("⚫", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
 
     // 🔴 SEVERE CONDITIONS (RED)
     if (temp >= 39 && temp <= 40) addIssue("🔴", "SEVERE", `High fever detected (${temp.toFixed(1)}°C).`, "severe");
     if (spo2 >= 85 && spo2 < 88) addIssue("🔴", "SEVERE", `Very low oxygen level (${spo2}%).`, "severe");
     if (heart >= 130 && heart < 150) addIssue("🔴", "SEVERE", `Rapid heart rate (${heart} BPM).`, "severe");
-    if (breath >= 30 && breath < 40) addIssue("🔴", "SEVERE", `Fast breathing (${breath} BPM).`, "severe");
+    if (touch >= 30 && touch < 40) addIssue("🔴", "SEVERE", `Fast touching (${touch} BPM).`, "severe");
 
     // 🟠 MODERATE CONDITIONS (ORANGE)
     if (temp >= 38 && temp < 39) addIssue("🟠", "MODERATE", `Fever detected (${temp.toFixed(1)}°C).`, "moderate");
     if (spo2 >= 88 && spo2 < 91) addIssue("🟠", "MODERATE", `Oxygen level slightly low (${spo2}%).`, "moderate");
     if (heart >= 110 && heart < 130) addIssue("🟠", "MODERATE", `Increased heart rate (${heart} BPM).`, "moderate");
-    if (breath >= 24 && breath < 30) addIssue("🟠", "MODERATE", `Breathing rate elevated (${breath} BPM).`, "moderate");
+    if (touch >= 24 && touch < 30) addIssue("🟠", "MODERATE", `touching rate elevated (${touch} BPM).`, "moderate");
 
     // 🟡 MILD CONDITIONS (YELLOW)
     if (temp >= 37.3 && temp < 38) addIssue("🟡", "MILD", `Slight fever (${temp.toFixed(1)}°C).`, "mild");
     if (spo2 >= 92 && spo2 < 95) addIssue("🟡", "MILD", `Oxygen level slightly reduced (${spo2}%).`, "mild");
     if (heart >= 100 && heart < 110) addIssue("🟡", "MILD", `Mild tachycardia (${heart} BPM).`, "mild");
-    if (breath >= 20 && breath < 24) addIssue("🟡", "MILD", `Slightly high breathing rate (${breath} BPM).`, "mild");
+    if (touch >= 20 && touch < 24) addIssue("🟡", "MILD", `Slightly high touching rate (${touch} BPM).`, "mild");
 
     // 🟢 NORMAL CONDITION (GREEN)
     if (issues.length === 0) {
@@ -194,7 +194,7 @@ async function sendDataToServer() {
         heartRate: parseFloat(document.getElementById("heartValue").textContent) || 0,
         pulse: parseFloat(document.getElementById("pulseValue").textContent) || 0,
         fall: parseFloat(document.getElementById("fallValue").textContent) || 0,
-        breath: parseFloat(document.getElementById("breathValue").textContent) || 0,
+        touch: parseFloat(document.getElementById("touchValue").textContent) || 0,
         analysis: document.getElementById("reportText").innerText,
     };
 

@@ -65,7 +65,7 @@ const dataSchema = new mongoose.Schema({
     heartRate: Number,
     pulse: Number,
     fall: Number,
-    breath: Number,
+    touch: Number,
     analysis: String
 });
 
