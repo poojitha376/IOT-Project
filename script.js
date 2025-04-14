@@ -96,7 +96,7 @@ function analyzeHealthStatus() {
     if (temp > 40) addIssue("⚫", "CRITICAL", `Temperature extreme (${temp.toFixed(1)}°C)!`, "critical");
     if (spo2 < 85) addIssue("⚫", "CRITICAL", `Oxygen dangerously low (${spo2}%)!`, "critical");
     if (heart > 150 || heart < 40) addIssue("⚫", "CRITICAL", `Abnormal heart rate (${heart} BPM)!`, "critical");
-    if (fall >= 8) addIssue("⚫", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
+    if (fall >= 2.8 || fall < 2.0) addIssue("⚫", "CRITICAL", "Fall detected! Immediate medical attention required.", "critical");
     if (touch == 4) addIssue("⚫", "CRITICAL", `The patient is seeking help!`, "critical");
 
 
