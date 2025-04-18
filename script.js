@@ -192,9 +192,21 @@ async function sendDataToServer() {
         heartRate: parseFloat(document.getElementById("heartValue").textContent) || 0,
         pulse: parseFloat(document.getElementById("pulseValue").textContent) || 0,
         fall: parseFloat(document.getElementById("fallValue").textContent) || 0,
-        touch: parseFloat(document.getElementById("touchValue").textContent) || 0,
-        analysis: document.getElementById("reportText").innerText,
+        touch: parseFloat(document.getElementById("touchValue").textContent),
+        analysis: document.getElementById("statusBox").innerText,
     };
+
+    if (
+        sensorData.temperature === 0 ||
+        sensorData.spo2 === 0 ||
+        sensorData.heartRate === 0 ||
+        sensorData.pulse === 0 ||
+        sensorData.fall === 0 || 
+        (sensorData.touch != 0 && sensorData.touch != 1 && sensorData.touch != 2 && sensorData.touch != 3 && sensorData.touch != 4)
+    ) {
+        console.warn("Incomplete sensor data. Not sending to server:", sensorData);
+        return;
+    }
 
     try {
         const response = await fetch("http://localhost:5001/data", {
@@ -265,8 +277,8 @@ if (Notification.permission !== "granted") Notification.requestPermission();
 setInterval(checkReminders, 60000); // Check every minute
 document.addEventListener("DOMContentLoaded", loadMedications);
 
-
 // Fetch data when dashboard loads
 document.addEventListener("DOMContentLoaded", () => {
     Object.keys(sensorMapping).forEach(fetchSensorData);
+    setInterval(() => location.reload(), 60000); 
 });
